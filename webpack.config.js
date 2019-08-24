@@ -43,7 +43,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'EEF React App Template',
+            title: 'Sea Fight Game',
             // Load a custom template (lodash by default see the FAQ for details)
             template: './templates/index.html'
         }),

@@ -1,7 +1,7 @@
 {
-    "name": "eef-react-app-template",
+    "name": "eef-sea-fight-game",
     "version": "1.0.0",
-    "description": "EEF React App Template",
+    "description": "Sea Fight Game",
     "main": "./src/index.tsx",
     "scripts": {
         "ui-build": "webpack",
@@ -12,14 +12,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/EugeneElkin/eef-thesaurus-trainer.git"
+        "url": "git+https://github.com/EugeneElkin/eef-sea-fight-game.git"
     },
     "author": "Evgenii Elkin",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/EugeneElkin/eef-thesaurus-trainer/issues"
+        "url": "https://github.com/EugeneElkin/eef-sea-fight-game/issues"
     },
-    "homepage": "https://github.com/EugeneElkin/eef-thesaurus-trainer#readme",
+    "homepage": "https://github.com/EugeneElkin/eef-sea-fight-game#readme",
     "dependencies": {
         "axios": "^0.19.0",
         "react": "^16.8.6",
