@@ -1,0 +1,25 @@
+.battle-field-container {
+    display: grid;
+    box-sizing: border-box;
+    grid-gap: 1px;
+}
+
+.battle-field-container div {
+    height: 30px;
+    width: 30px;
+    border: 1px solid gray;
+    border-collapse: collapse;
+}
+
+.battle-field-container div.numeric-label, .battle-field-container div.char-label {
+    background-color: gray;
+    color: white;
+}
+
+.battle-field-container div.numeric-label {
+    text-align: right;
+}
+
+.battle-field-container div.clickable {
+    cursor: pointer;
+}

@@ -4,7 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createStore } from "redux";
 
-import { PageComponent } from "./components/page";
+import { PageComponent } from "./components/page/page";
 
 ReactDOM.render(
     <PageComponent />,

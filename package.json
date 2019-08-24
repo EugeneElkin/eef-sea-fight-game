@@ -4,9 +4,9 @@
     "description": "Sea Fight Game",
     "main": "./src/index.tsx",
     "scripts": {
-        "ui-build": "webpack",
-        "ui-run-server:dev": "webpack-dev-server",
-        "ui-start": "npm run ui-run-server:dev",
+        "build": "webpack",
+        "run-server:dev": "webpack-dev-server",
+        "start": "npm run run-server:dev",
         "test": "echo \"Error: no test specified\" && exit 1",
         "tslint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'"
     },
@@ -26,6 +26,7 @@
         "react-dom": "^16.8.6",
         "react-redux": "^7.1.0",
         "redux": "^4.0.1",
+        "rxjs": "^6.5.2",
         "uuid": "^3.3.2"
     },
     "devDependencies": {

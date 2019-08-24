@@ -1,0 +1,5 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    height: 100vh;
+}

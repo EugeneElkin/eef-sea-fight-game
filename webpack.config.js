@@ -35,11 +35,12 @@ module.exports = {
     // This is important because it allows us to avoid bundling all of our
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
+        "axios": "axios",
         "react": "React",
         "react-dom": "ReactDOM",
         "react-redux": "ReactRedux",
         "redux": "Redux",
-        "axios": "axios"
+        "rxjs": "rxjs"
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -56,6 +57,11 @@ module.exports = {
             {
                 from: './templates/assets/favicon.ico',
                 to: 'assets',
+                toType: 'dir'
+            },
+            {
+                from: './node_modules/rxjs/bundles/rxjs.umd.min.js',
+                to: 'externals',
                 toType: 'dir'
             },
             {
