@@ -1,7 +1,12 @@
-import "./fleet-state.css";
 import React = require("react");
+import { IShip } from "../../classes/ship";
+import "./fleet-state.css";
 
-export class FleetStateComponent extends React.Component<{}> {
+interface IFleetStateComponentProps {
+    fleet: IShip[];
+}
+
+export class FleetStateComponent extends React.Component<IFleetStateComponentProps> {
     public render() {
         return (
             <div className="fleet-state-container">

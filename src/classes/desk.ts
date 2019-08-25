@@ -1,10 +1,6 @@
 import { ICoordinate } from "./coordinate";
 
 export interface IDesk {
-    coordinates: ICoordinate[];
+    coordinates: ICoordinate[][];
     owner: string;
-}
-
-export class Desk {
-
 }

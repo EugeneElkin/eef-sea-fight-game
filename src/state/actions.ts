@@ -5,37 +5,18 @@ export interface IAppAction extends Action<number> {
 }
 
 export enum AppActionType {
-    CLICK_CHECK_ANSWER_BTN = 1,
-    CLICK_NEW_ROUND_BTN,
-    CLICK_UPLOAD_BTN,
-    PICK_UPLOADING_TAB,
-    PICK_TRAINING_TAB,
-    SET_WORD_ENTIRES,
+    CLICK_TO_OCCUPY_CELL = 1,
+    CLICK_TO_FIRE_CELL,
 }
 
 const app = {
-    clickCheckAnswerBtn: (id: string, isAnswered: boolean, answer: string) => {
-        return {
-            type: AppActionType.CLICK_CHECK_ANSWER_BTN,
-            value: {
-                answer: answer,
-                id: id,
-                isAnswered: isAnswered,
-            },
-        }
-    },
-    clickNewRoundBtn: () => ({
-        type: AppActionType.CLICK_NEW_ROUND_BTN
+    clickToFireCell: (x: number, y: number, player: string) => ({
+        type: AppActionType.CLICK_TO_FIRE_CELL,
+        value: {x, y, player},
     }),
-    clickUploadBtn: (words?: string) => ({
-        type: AppActionType.CLICK_UPLOAD_BTN,
-        value: words,
-    }),
-    pickUploadingTab: () => ({
-        type: AppActionType.PICK_UPLOADING_TAB,
-    }),
-    pickTrainingTab: () => ({
-        type: AppActionType.PICK_TRAINING_TAB,
+    clickToOccupyCell: (x: number, y: number, player: string) => ({
+        type: AppActionType.CLICK_TO_OCCUPY_CELL,
+        value: {x, y, player},
     }),
 };
 

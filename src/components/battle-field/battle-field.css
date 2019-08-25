@@ -14,6 +14,7 @@
 .battle-field-container div.numeric-label, .battle-field-container div.char-label {
     background-color: gray;
     color: white;
+    padding: 2px;
 }
 
 .battle-field-container div.numeric-label {
@@ -22,4 +23,12 @@
 
 .battle-field-container div.clickable {
     cursor: pointer;
+}
+
+.battle-field-container div.is-occupied {
+    background-color: #83b983;
+}
+
+.battle-field-container div.is-not-available {
+    background-color: #e26f6f;
 }

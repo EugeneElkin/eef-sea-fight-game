@@ -1,15 +1,18 @@
+import * as React from "react";
+import { createStore } from "redux";
+import { rootReducer } from "../../state/reducers";
+import { ConnectedPlayerDeskComponent } from "../player-desk/player-desk";
 import "./page.css";
 
-import * as React from "react";
-import { PlayerDeskComponent } from "../player-desk/player-desk";
+export const store = createStore(rootReducer);
 
 export class PageComponent extends React.Component<{}> {
     public render() {
         return (
             <React.Fragment>
                 <div className="grid-container">
-                    <PlayerDeskComponent name="Player 1" />
-                    <PlayerDeskComponent name="Player 2" />
+                    <ConnectedPlayerDeskComponent player="player1" store={store} />
+                    <ConnectedPlayerDeskComponent player="player2" store={store} />
                 </div>
             </React.Fragment>
         );
