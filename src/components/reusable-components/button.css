@@ -1,0 +1,17 @@
+button {
+    background-color: #b5e0c3;
+    border: none;
+    color: #474B24;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #B7C0C3;
+}
+
+button[disabled] {
+    background-color: #e3e3e3;
+    color: #a4a4a4;
+}
