@@ -42,6 +42,54 @@ export class DataWorkShopService {
         } else if (attachmentToShipResult === AttachmentToShipResult.FAILED) {
             this.AddNewShip(x, y, coordinates, fieldSize, player.fleet);
         }
+
+        if (this.isFleetDeployed(player.fleet)) {
+            this.markRestCellsAsNotAllowed(coordinates);
+        }
+    }
+
+    private static markRestCellsAsNotAllowed(coordinates: ICoordinate[][]): void {
+        for (const col of coordinates) {
+            for (const cell of col) {
+                if (!cell.isOccupied) {
+                    cell.isAvailable = false;
+                }
+            }
+        }
+    }
+
+    private static isFleetDeployed(fleet: IShip[]): boolean {
+        let numOfBattleships: number = 0;
+        let numOfCruisers: number = 0;
+        let numOfDestroyers: number = 0;
+        let numOfTorpedoBoats: number = 0;
+
+        for (const ship of fleet) {
+            if (ship.coordinates.length === 1) {
+                numOfTorpedoBoats++;
+            }
+
+            if (ship.coordinates.length === 2) {
+                numOfDestroyers++;
+            }
+
+            if (ship.coordinates.length === 3) {
+                numOfCruisers++;
+            }
+
+            if (ship.coordinates.length === 4) {
+                numOfBattleships++;
+            }
+        }
+
+        if (numOfTorpedoBoats === 4
+            && numOfDestroyers === 3
+            && numOfCruisers === 2
+            && numOfBattleships) {
+            return true;
+        }
+
+        return false;
     }
 
     private static AddNewShip(x: number, y: number, coordinates: ICoordinate[][], fieldSize: number, fleet: IShip[]): void {

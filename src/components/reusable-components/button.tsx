@@ -4,7 +4,7 @@ import "./button.css";
 
 interface IButtonComponentProps {
     isDisabled?: boolean;
-    deploymentNotification: () => Observable<boolean>;
+    deploymentNotification: () => Observable<{}>;
 }
 
 interface IButtonComponentState {
@@ -24,8 +24,8 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
     }
 
     public componentDidMount() {
-        this.subscription = this.props.deploymentNotification().subscribe((isFilled) => {
-            this.setState({ isDisabled: !isFilled });
+        this.subscription = this.props.deploymentNotification().subscribe(() => {
+            this.setState({ isDisabled: false });
         });
     }
 

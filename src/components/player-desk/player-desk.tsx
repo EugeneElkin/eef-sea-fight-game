@@ -6,7 +6,7 @@ import { IPlayer } from "../../classes/player";
 import { IShip } from "../../classes/ship";
 import { Actions } from "../../state/actions";
 import { ICombinedReducersEntries } from "../../state/reducers";
-import { BattleFieldComponent, BattleFieldMode } from "../battle-field/battle-field";
+import { BattleFieldComponent } from "../battle-field/battle-field";
 import { FleetStateComponent } from "../fleet-statistic/fleet-state";
 import { ButtonComponent } from "../reusable-components/button";
 import "./player-desk.css";
@@ -33,7 +33,8 @@ interface IPlayerDeskComponentDescriptor extends IPlayerDeskComponentProps, IPla
 }
 
 class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor>  {
-    private subject: Subject<boolean> = new Subject<boolean>();
+
+    private subject: Subject<{}> = new Subject();
 
     public render() {
         return (
@@ -42,10 +43,10 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
                 <br />
                 <BattleFieldComponent
                     size={this.props.size}
-                    mode={BattleFieldMode.preparation}
                     clickToOccupyCell={this.props.handlers.clickToOccupyCell}
                     clickToFireCell={this.props.handlers.clickToFireCell}
                     coordinates={this.props.fieldCoordinates}
+                    deploymentNotification={this.deploymentNotification}
                 />
                 <br />
                 <FleetStateComponent
@@ -61,8 +62,8 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
         );
     }
 
-    private notifyAboutDeployment: () => void = () => this.subject.next(true);
-    private deploymentNotification: () => Observable<boolean> = () => this.subject.asObservable();
+    private notifyAboutDeployment: () => void = () => this.subject.next();
+    private deploymentNotification: () => Observable<{}> = () => this.subject.asObservable();
 }
 
 const mapReduxStateToComponentProps: (state: ICombinedReducersEntries, ownProps: any) => IPlayerDeskComponentProps = (state, ownProps) => {

@@ -1,23 +1,52 @@
 import React = require("react");
+import { Observable, Subscription } from "rxjs";
 import { ICoordinate } from "../../classes/coordinate";
 import "./battle-field.css";
 
-export enum BattleFieldMode {
-    battle,
-    preparation,
+enum BattleFieldMode {
+    BATTLE,
+    DEPLOYMENT,
+    DEPLOYED,
+    WAITING_FOR_OPPONENT,
 }
 
-export interface IBattleFieldComponentProps {
+interface IBattleFieldComponentProps {
     size: number;
-    mode: BattleFieldMode;
     coordinates: ICoordinate[][];
     clickToOccupyCell: (x: number, y: number) => void;
     clickToFireCell: (x: number, y: number) => void;
+    deploymentNotification: () => Observable<{}>;
+}
+
+interface IBattleFieldComponentState {
+    mode: BattleFieldMode;
 }
 
 const charArr: string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
 
-export class BattleFieldComponent extends React.Component<IBattleFieldComponentProps>  {
+export class BattleFieldComponent extends React.Component<IBattleFieldComponentProps, IBattleFieldComponentState>  {
+    private subscription?: Subscription;
+
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            mode: BattleFieldMode.DEPLOYMENT,
+        };
+    }
+
+    public componentDidMount() {
+        this.subscription = this.props.deploymentNotification().subscribe(() => {
+            this.setState({ mode: BattleFieldMode.DEPLOYED });
+        });
+    }
+
+    public componentWillUnmount() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+    }
+
     public render() {
         const fieldSize: number = this.props.size + 1;
 
@@ -25,9 +54,12 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
             gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
         };
 
-        const handler = (this.props.mode === BattleFieldMode.preparation)
-            ? this.props.clickToOccupyCell
-            : this.props.clickToFireCell;
+        let handler: (x: number, y: number) => void = (x, y) => { return; };
+        if (this.state.mode === BattleFieldMode.DEPLOYMENT) {
+            handler = this.props.clickToOccupyCell;
+        } else if (this.state.mode === BattleFieldMode.BATTLE) {
+            handler = this.props.clickToFireCell;
+        }
 
         return (
             <div
