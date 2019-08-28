@@ -4,11 +4,12 @@ import "./button.css";
 
 interface IButtonComponentProps {
     isDisabled?: boolean;
-    deploymentNotification: () => Observable<{}>;
+    enableNotification?: () => Observable<boolean>;
+    onClickHandler?: () => void;
 }
 
 interface IButtonComponentState {
-    isDisabled?: boolean;
+    isDisabled: boolean;
 }
 
 export class ButtonComponent extends React.Component<IButtonComponentProps, IButtonComponentState> {
@@ -19,14 +20,16 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
         super(props);
 
         this.state = {
-            isDisabled: true,
+            isDisabled: this.props.isDisabled ? this.props.isDisabled : false,
         };
     }
 
     public componentDidMount() {
-        this.subscription = this.props.deploymentNotification().subscribe(() => {
-            this.setState({ isDisabled: false });
-        });
+        if (this.props.enableNotification) {
+            this.subscription = this.props.enableNotification().subscribe((isEnabled) => {
+                this.setState({ isDisabled: !isEnabled });
+            });
+        }
     }
 
     public componentWillUnmount() {
@@ -37,7 +40,10 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
 
     public render() {
         return (
-            <button disabled={this.state.isDisabled}>{this.props.children}</button>
+            <button
+                disabled={this.state.isDisabled}
+                onClick={this.props.onClickHandler}
+            >{this.props.children}</button>
         );
     }
 }

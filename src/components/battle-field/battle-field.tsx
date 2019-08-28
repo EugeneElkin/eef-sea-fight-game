@@ -1,73 +1,55 @@
 import React = require("react");
-import { Observable, Subscription } from "rxjs";
 import { ICoordinate } from "../../classes/coordinate";
 import "./battle-field.css";
-
-enum BattleFieldMode {
-    BATTLE,
-    DEPLOYMENT,
-    DEPLOYED,
-    WAITING_FOR_OPPONENT,
-}
+import { BattleFieldMode } from "../../enums/battle-field-mode";
 
 interface IBattleFieldComponentProps {
-    size: number;
     coordinates: ICoordinate[][];
+    mode: BattleFieldMode;
+    size: number;
     clickToOccupyCell: (x: number, y: number) => void;
     clickToFireCell: (x: number, y: number) => void;
-    deploymentNotification: () => Observable<{}>;
-}
-
-interface IBattleFieldComponentState {
-    mode: BattleFieldMode;
 }
 
 const charArr: string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
 
-export class BattleFieldComponent extends React.Component<IBattleFieldComponentProps, IBattleFieldComponentState>  {
-    private subscription?: Subscription;
-
+export class BattleFieldComponent extends React.Component<IBattleFieldComponentProps>  {
     constructor(props: any) {
         super(props);
 
         this.state = {
-            mode: BattleFieldMode.DEPLOYMENT,
+            mode: this.props.mode ? this.props.mode : BattleFieldMode.DEPLOYMENT,
         };
-    }
-
-    public componentDidMount() {
-        this.subscription = this.props.deploymentNotification().subscribe(() => {
-            this.setState({ mode: BattleFieldMode.DEPLOYED });
-        });
-    }
-
-    public componentWillUnmount() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 
     public render() {
-        const fieldSize: number = this.props.size + 1;
+        if (this.props.mode === BattleFieldMode.READY) {
+            return (
+                <div className="battle-field-container">
+                </div>
+            );
+        } else {
+            const fieldSize: number = this.props.size + 1;
 
-        const divStyle = {
-            gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
-        };
+            const divStyle = {
+                gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
+            };
 
-        let handler: (x: number, y: number) => void = (x, y) => { return; };
-        if (this.state.mode === BattleFieldMode.DEPLOYMENT) {
-            handler = this.props.clickToOccupyCell;
-        } else if (this.state.mode === BattleFieldMode.BATTLE) {
-            handler = this.props.clickToFireCell;
+            let handler: (x: number, y: number) => void = (x, y) => { return; };
+            if (this.props.mode === BattleFieldMode.DEPLOYMENT) {
+                handler = this.props.clickToOccupyCell;
+            } else if (this.props.mode === BattleFieldMode.UNDER_FIRE) {
+                handler = this.props.clickToFireCell;
+            }
+
+            return (
+                <div
+                    className="battle-field-container"
+                    style={divStyle}>
+                    {this.buildCells(this.props.size + 1, handler)}
+                </div>
+            );
         }
-
-        return (
-            <div
-                className="battle-field-container"
-                style={divStyle}>
-                {this.buildCells(this.props.size + 1, handler)}
-            </div>
-        );
     }
 
     private buildCells(fieldSize: number, handler: (x: number, y: number) => void): JSX.Element[] {

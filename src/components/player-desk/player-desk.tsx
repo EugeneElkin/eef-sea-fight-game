@@ -1,9 +1,7 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { Observable, Subject } from "rxjs";
-import { ICoordinate } from "../../classes/coordinate";
-import { IPlayer } from "../../classes/player";
-import { IShip } from "../../classes/ship";
+import { IPlayer, createDefaultPlayer } from "../../classes/player";
 import { Actions } from "../../state/actions";
 import { ICombinedReducersEntries } from "../../state/reducers";
 import { BattleFieldComponent } from "../battle-field/battle-field";
@@ -12,17 +10,17 @@ import { ButtonComponent } from "../reusable-components/button";
 import "./player-desk.css";
 
 import React = require("react");
+import { BattleFieldMode } from "../../enums/battle-field-mode";
 
 interface IPlayerDeskComponentProps {
-    playerName: string;
+    player: IPlayer;
     size: number;
-    fieldCoordinates: ICoordinate[][];
-    fleet: IShip[];
 }
 
 interface IPlayerDesktopHandlers {
     clickToOccupyCell: (x: number, y: number) => void;
     clickToFireCell: (x: number, y: number) => void;
+    clickToSetFieldReady: () => void;
 }
 
 interface IPlayerDesktopHandlersWrapper {
@@ -34,45 +32,44 @@ interface IPlayerDeskComponentDescriptor extends IPlayerDeskComponentProps, IPla
 
 class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor>  {
 
-    private subject: Subject<{}> = new Subject();
+    private deploymentEndingSubject: Subject<boolean> = new Subject();
 
     public render() {
         return (
             <div className="player-desk-container">
-                <div>{this.props.playerName}</div>
+                <div>{this.props.player.name}</div>
                 <br />
                 <BattleFieldComponent
-                    size={this.props.size}
                     clickToOccupyCell={this.props.handlers.clickToOccupyCell}
                     clickToFireCell={this.props.handlers.clickToFireCell}
-                    coordinates={this.props.fieldCoordinates}
-                    deploymentNotification={this.deploymentNotification}
+                    coordinates={this.props.player.desk.coordinates}
+                    mode={this.props.player.desk.state}
+                    size={this.props.size}
                 />
                 <br />
                 <FleetStateComponent
-                    fleet={this.props.fleet}
-                    notifyAboutDeployment={this.notifyAboutDeployment}
+                    fleet={this.props.player.fleet}
+                    notifyAboutDeployment={this.notifyAboutDeploymentEnding}
                 />
                 <br />
                 <ButtonComponent
+                    onClickHandler={this.props.handlers.clickToSetFieldReady}
+                    enableNotification={this.observableDeploymentEnding}
                     isDisabled={true}
-                    deploymentNotification={this.deploymentNotification}
                 >I am ready to fight!</ButtonComponent>
             </div>
         );
     }
 
-    private notifyAboutDeployment: () => void = () => this.subject.next();
-    private deploymentNotification: () => Observable<{}> = () => this.subject.asObservable();
+    private notifyAboutDeploymentEnding: () => void = () => this.deploymentEndingSubject.next(true);
+    private observableDeploymentEnding: () => Observable<boolean> = () => this.deploymentEndingSubject.asObservable();
 }
 
 const mapReduxStateToComponentProps: (state: ICombinedReducersEntries, ownProps: any) => IPlayerDeskComponentProps = (state, ownProps) => {
     const playerState: IPlayer = state ? state.appReducer[ownProps.player] : undefined;
 
     return {
-        fieldCoordinates: playerState ? playerState.desk.coordinates : [],
-        fleet: playerState ? playerState.fleet : [],
-        playerName: playerState ? playerState.name : "Noname",
+        player: playerState ? playerState : createDefaultPlayer(),
         size: state ? state.appReducer.fieldSize : 10,
     };
 };
@@ -87,6 +84,9 @@ const mapComponentEventsToReduxDispatches: (dispatch: Dispatch<Action<number>>, 
                 clickToOccupyCell: (x, y) => {
                     dispatch(Actions.app.clickToOccupyCell(x, y, ownProps.player));
                 },
+                clickToSetFieldReady: () => {
+                    dispatch(Actions.app.clickToSetBattlefieldReady(ownProps.player));
+                }
             },
         };
     };
