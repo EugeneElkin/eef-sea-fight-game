@@ -1,8 +1,8 @@
 import { combineReducers, Reducer } from "redux";
 import { IPlayer } from "../classes/player";
+import { BattleFieldMode } from "../enums/battle-field-mode";
 import { DataWorkShopService } from "../services/data-workshop-service";
 import { AppActionType, IAppAction } from "./actions";
-import { BattleFieldMode } from "../enums/battle-field-mode";
 
 interface IAppReduxState {
     player1: IPlayer;
@@ -20,7 +20,7 @@ const initialAppReducerState: IAppReduxState = {
         desk: {
             coordinates: DataWorkShopService.createPureCoordinates(10),
             owner: "Player 1",
-            state: BattleFieldMode.DEPLOYMENT
+            state: BattleFieldMode.DEPLOYMENT,
         },
         fleet: [],
         name: "Player 1",
@@ -29,32 +29,41 @@ const initialAppReducerState: IAppReduxState = {
         desk: {
             coordinates: DataWorkShopService.createPureCoordinates(10),
             owner: "Player 2",
-            state: BattleFieldMode.DEPLOYMENT
+            state: BattleFieldMode.DEPLOYMENT,
         },
         fleet: [],
         name: "Player 2",
     },
 };
 
-const appReducer: Reducer = (state: IAppReduxState = initialAppReducerState, action: IAppAction): IAppReduxState => {
-    switch (action.type) {
-        case AppActionType.CLICK_TO_OCCUPY_CELL:
-            return function () {
-                const newState: IAppReduxState = JSON.parse(JSON.stringify(state));
-                const player: IPlayer = newState[action.value.player];
-                DataWorkShopService.occupyCell(action.value.x, action.value.y, player, newState.fieldSize);
-                return newState;
-            }();
-        case AppActionType.CLICK_TO_SET_BATTLEFIELD_READY:
-            return function () {
-                const newState: IAppReduxState = JSON.parse(JSON.stringify(state));
-                const player: IPlayer = newState[action.value.player];
-                player.desk.state = BattleFieldMode.READY;
-                return newState;
-            }();
-        default:
+const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerState, action: IAppAction): IAppReduxState => {
+
+    const reducers = {
+        [AppActionType.CLICK_TO_OCCUPY_CELL]: (state: IAppReduxState) => {
+            const player: IPlayer = state[action.value.player];
+            DataWorkShopService.occupyCell(action.value.x, action.value.y, player, state.fieldSize);
             return state;
+        },
+        [AppActionType.CLICK_TO_SET_BATTLEFIELD_READY]: (state: IAppReduxState) => {
+            const player: IPlayer = state[action.value.player];
+            const enemy: IPlayer = state[action.value.enemy];
+            player.desk.state = BattleFieldMode.READY_TO_FIGHT;
+            if (player.desk.state === BattleFieldMode.READY_TO_FIGHT
+                && enemy.desk.state === BattleFieldMode.READY_TO_FIGHT) {
+                player.desk.state = BattleFieldMode.MIST_OF_WAR;
+            }
+            return state;
+        },
+    };
+
+    const clonnedState: IAppReduxState = JSON.parse(JSON.stringify(currentState));
+    const reducer = reducers[action.type];
+
+    if (reducer) {
+        return reducer(clonnedState);
     }
+
+    return clonnedState;
 };
 
 export const rootReducer: Reducer<ICombinedReducersEntries> = combineReducers({

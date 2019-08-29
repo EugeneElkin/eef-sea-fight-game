@@ -1,4 +1,5 @@
 import { Action } from "redux";
+import { IDeskContext } from "../classes/desk-context";
 
 export interface IAppAction extends Action<number> {
     value?: any;
@@ -11,17 +12,17 @@ export enum AppActionType {
 }
 
 const app = {
-    clickToFireCell: (x: number, y: number, player: string) => ({
+    clickToFireCell: (x: number, y: number, deskContext: IDeskContext) => ({
         type: AppActionType.CLICK_TO_FIRE_CELL,
-        value: {x, y, player},
+        value: {x, y, player: deskContext.player},
     }),
-    clickToOccupyCell: (x: number, y: number, player: string) => ({
+    clickToOccupyCell: (x: number, y: number, deskContext: IDeskContext) => ({
         type: AppActionType.CLICK_TO_OCCUPY_CELL,
-        value: {x, y, player},
+        value: {x, y, player: deskContext.player},
     }),
-    clickToSetBattlefieldReady: (player: string) => ({
+    clickToSetBattlefieldReady: (deskContext: IDeskContext) => ({
         type: AppActionType.CLICK_TO_SET_BATTLEFIELD_READY,
-        value: {player},
+        value: {...deskContext},
     }),
 };
 

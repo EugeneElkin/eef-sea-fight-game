@@ -1,7 +1,8 @@
 import React = require("react");
 import { ICoordinate } from "../../classes/coordinate";
-import "./battle-field.css";
 import { BattleFieldMode } from "../../enums/battle-field-mode";
+import { CellComponent } from "../cell/cell";
+import "./battle-field.css";
 
 interface IBattleFieldComponentProps {
     coordinates: ICoordinate[][];
@@ -23,36 +24,29 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
     }
 
     public render() {
-        if (this.props.mode === BattleFieldMode.READY) {
-            return (
-                <div className="battle-field-container">
-                </div>
-            );
-        } else {
-            const fieldSize: number = this.props.size + 1;
+        const fieldSize: number = this.props.size + 1;
 
-            const divStyle = {
-                gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
-            };
+        const divStyle = {
+            gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
+        };
 
-            let handler: (x: number, y: number) => void = (x, y) => { return; };
-            if (this.props.mode === BattleFieldMode.DEPLOYMENT) {
-                handler = this.props.clickToOccupyCell;
-            } else if (this.props.mode === BattleFieldMode.UNDER_FIRE) {
-                handler = this.props.clickToFireCell;
-            }
-
-            return (
-                <div
-                    className="battle-field-container"
-                    style={divStyle}>
-                    {this.buildCells(this.props.size + 1, handler)}
-                </div>
-            );
+        let handler: ((x: number, y: number) => void) | undefined;
+        if (this.props.mode === BattleFieldMode.DEPLOYMENT) {
+            handler = this.props.clickToOccupyCell;
+        } else if (this.props.mode === BattleFieldMode.UNDER_FIRE) {
+            handler = this.props.clickToFireCell;
         }
+
+        return (
+            <div
+                className="battle-field-container"
+                style={divStyle}>
+                {this.buildCells(this.props.size + 1, handler)}
+            </div>
+        );
     }
 
-    private buildCells(fieldSize: number, handler: (x: number, y: number) => void): JSX.Element[] {
+    private buildCells(fieldSize: number, handler?: (x: number, y: number) => void): JSX.Element[] {
         const cells: JSX.Element[] = [];
         let charInx: number = 0;
 
@@ -66,20 +60,19 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
                 // TOODO: Adjusted only for field 10 x 10. For other sizes must be corrected.
                 const x: number = (i % fieldSize) > 0 ? (i % fieldSize) - 2 : 9;
                 const y: number = Math.floor((i - 2) / fieldSize) - 1;
+                const cellStatus = {
+                    isNotAllowed: this.props.mode === BattleFieldMode.DEPLOYMENT ? !this.props.coordinates[x][y].isAvailable : false,
+                    isOccupied: this.props.mode === BattleFieldMode.DEPLOYMENT ? this.props.coordinates[x][y].isOccupied : false,
+                };
 
-                const cellClasses: string[] = ["clickable"];
-
-                if (this.props.coordinates[x][y].isOccupied) {
-                    cellClasses.push("is-occupied");
-                }
-
-                if (!this.props.coordinates[x][y].isAvailable) {
-                    cellClasses.push("is-not-available");
-                }
-
-                cells.push(<div className={cellClasses.join(" ")} onClick={() => handler(x, y)}></div>);
+                cells.push(<CellComponent
+                    key={i}
+                    status={cellStatus}
+                    clickHandler={handler}
+                    x={x}
+                    y={y}
+                />);
             }
-
         }
 
         return cells;

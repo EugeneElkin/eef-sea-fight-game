@@ -1,16 +1,17 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { Observable, Subject } from "rxjs";
-import { IPlayer, createDefaultPlayer } from "../../classes/player";
+import { IDeskContext } from "../../classes/desk-context";
+import { createDefaultPlayer, IPlayer } from "../../classes/player";
+import { BattleFieldMode } from "../../enums/battle-field-mode";
 import { Actions } from "../../state/actions";
 import { ICombinedReducersEntries } from "../../state/reducers";
 import { BattleFieldComponent } from "../battle-field/battle-field";
 import { FleetStateComponent } from "../fleet-statistic/fleet-state";
-import { ButtonComponent } from "../reusable-components/button";
+import { ButtonComponent } from "../reusable-components/button/button";
 import "./player-desk.css";
 
 import React = require("react");
-import { BattleFieldMode } from "../../enums/battle-field-mode";
 
 interface IPlayerDeskComponentProps {
     player: IPlayer;
@@ -52,11 +53,18 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
                     notifyAboutDeployment={this.notifyAboutDeploymentEnding}
                 />
                 <br />
-                <ButtonComponent
-                    onClickHandler={this.props.handlers.clickToSetFieldReady}
-                    enableNotification={this.observableDeploymentEnding}
-                    isDisabled={true}
-                >I am ready to fight!</ButtonComponent>
+                {this.props.player.desk.state === BattleFieldMode.DEPLOYMENT &&
+                    <ButtonComponent
+                        onClickHandler={this.props.handlers.clickToSetFieldReady}
+                        enableNotification={this.observableDeploymentEnding}
+                        isDisabled={true}
+                    >I am ready to fight!</ButtonComponent>
+                }
+                {this.props.player.desk.state !== BattleFieldMode.DEPLOYMENT &&
+                    <ButtonComponent
+                        isDisabled={this.props.player.desk.state !== BattleFieldMode.MIST_OF_WAR}
+                    >Make a turn</ButtonComponent>
+                }
             </div>
         );
     }
@@ -65,7 +73,7 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
     private observableDeploymentEnding: () => Observable<boolean> = () => this.deploymentEndingSubject.asObservable();
 }
 
-const mapReduxStateToComponentProps: (state: ICombinedReducersEntries, ownProps: any) => IPlayerDeskComponentProps = (state, ownProps) => {
+const mapReduxStateToComponentProps: (state: ICombinedReducersEntries, ownProps: IDeskContext) => IPlayerDeskComponentProps = (state, ownProps) => {
     const playerState: IPlayer = state ? state.appReducer[ownProps.player] : undefined;
 
     return {
@@ -74,7 +82,7 @@ const mapReduxStateToComponentProps: (state: ICombinedReducersEntries, ownProps:
     };
 };
 
-const mapComponentEventsToReduxDispatches: (dispatch: Dispatch<Action<number>>, ownProps: any) => IPlayerDesktopHandlersWrapper =
+const mapComponentEventsToReduxDispatches: (dispatch: Dispatch<Action<number>>, ownProps: IDeskContext) => IPlayerDesktopHandlersWrapper =
     (dispatch, ownProps) => {
         return {
             handlers: {
@@ -82,16 +90,17 @@ const mapComponentEventsToReduxDispatches: (dispatch: Dispatch<Action<number>>, 
                     // do nothing for a while
                 },
                 clickToOccupyCell: (x, y) => {
-                    dispatch(Actions.app.clickToOccupyCell(x, y, ownProps.player));
+                    dispatch(Actions.app.clickToOccupyCell(x, y, ownProps));
                 },
                 clickToSetFieldReady: () => {
-                    dispatch(Actions.app.clickToSetBattlefieldReady(ownProps.player));
-                }
+                    dispatch(Actions.app.clickToSetBattlefieldReady(ownProps));
+                },
             },
         };
     };
 
-export const ConnectedPlayerDeskComponent: any = connect(
-    mapReduxStateToComponentProps,
-    mapComponentEventsToReduxDispatches,
-)(PlayerDeskComponent);
+export const ConnectedPlayerDeskComponent: any
+    = connect<IPlayerDeskComponentProps, IPlayerDesktopHandlersWrapper, IDeskContext, ICombinedReducersEntries>(
+        mapReduxStateToComponentProps,
+        mapComponentEventsToReduxDispatches,
+    )(PlayerDeskComponent);

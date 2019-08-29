@@ -1,5 +1,6 @@
 export enum BattleFieldMode {
     DEPLOYMENT,
-    READY,
+    READY_TO_FIGHT,
     UNDER_FIRE,
+    MIST_OF_WAR,
 }

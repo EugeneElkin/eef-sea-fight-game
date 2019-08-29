@@ -11,8 +11,8 @@ export class PageComponent extends React.Component<{}> {
         return (
             <React.Fragment>
                 <div className="grid-container">
-                    <ConnectedPlayerDeskComponent player="player1" store={store} />
-                    <ConnectedPlayerDeskComponent player="player2" store={store} />
+                    <ConnectedPlayerDeskComponent {...{player: "player1", enemy: "player2"}} store={store} />
+                    <ConnectedPlayerDeskComponent {...{player: "player2", enemy: "player1"}} store={store} />
                 </div>
             </React.Fragment>
         );

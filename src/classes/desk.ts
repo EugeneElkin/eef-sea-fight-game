@@ -1,5 +1,5 @@
-import { ICoordinate } from "./coordinate";
 import { BattleFieldMode } from "../enums/battle-field-mode";
+import { ICoordinate } from "./coordinate";
 
 export interface IDesk {
     coordinates: ICoordinate[][];

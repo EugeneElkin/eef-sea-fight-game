@@ -1,16 +1,16 @@
-import { IDesk, createDefaultDesk } from "./desk";
+import { createDefaultDesk, IDesk } from "./desk";
 import { IShip } from "./ship";
 
 export interface IPlayer {
+    desk: IDesk;
     name: string;
     fleet: IShip[];
-    desk: IDesk;
 }
 
 export function createDefaultPlayer(): IPlayer {
     return {
-        name: "Noname",
         desk: createDefaultDesk(),
-        fleet: []
+        fleet: [],
+        name: "Noname",
     };
 }
