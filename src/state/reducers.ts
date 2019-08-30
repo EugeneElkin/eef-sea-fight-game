@@ -39,12 +39,17 @@ const initialAppReducerState: IAppReduxState = {
 const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerState, action: IAppAction): IAppReduxState => {
 
     const reducers = {
-        [AppActionType.CLICK_TO_OCCUPY_CELL]: (state: IAppReduxState) => {
+        [AppActionType.FIRE_CELL]: (state: IAppReduxState) => {
+            const player: IPlayer = state[action.value.player];
+            player.desk.coordinates[action.value.x][action.value.y].isFired = true;
+            return state;
+        },
+        [AppActionType.OCCUPY_CELL]: (state: IAppReduxState) => {
             const player: IPlayer = state[action.value.player];
             DataWorkShopService.occupyCell(action.value.x, action.value.y, player, state.fieldSize);
             return state;
         },
-        [AppActionType.CLICK_TO_SET_BATTLEFIELD_READY]: (state: IAppReduxState) => {
+        [AppActionType.SET_BATTLEFIELD_READY]: (state: IAppReduxState) => {
             const player: IPlayer = state[action.value.player];
             const enemy: IPlayer = state[action.value.enemy];
             player.desk.state = BattleFieldMode.READY_TO_FIGHT;
@@ -54,6 +59,11 @@ const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerSta
             }
             return state;
         },
+        [AppActionType.SET_OPPONENT_FIELD_UNDER_FIRE]: (state: IAppReduxState) => {
+            const enemy: IPlayer = state[action.value.enemy];
+            enemy.desk.state = BattleFieldMode.UNDER_FIRE;
+            return state;
+        }
     };
 
     const clonnedState: IAppReduxState = JSON.parse(JSON.stringify(currentState));

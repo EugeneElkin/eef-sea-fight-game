@@ -20,15 +20,3 @@
 .battle-field-container div.numeric-label {
     text-align: right;
 }
-
-.battle-field-container div.clickable {
-    cursor: pointer;
-}
-
-.battle-field-container div.is-occupied {
-    background-color: #83b983;
-}
-
-.battle-field-container div.is-not-available {
-    background-color: #ecdcdc;
-}

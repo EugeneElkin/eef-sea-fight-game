@@ -1,7 +1,7 @@
 import React = require("react");
 import { ICoordinate } from "../../classes/coordinate";
 import { BattleFieldMode } from "../../enums/battle-field-mode";
-import { CellComponent } from "../cell/cell";
+import { CellComponent, CellStatus } from "../cell/cell";
 import "./battle-field.css";
 
 interface IBattleFieldComponentProps {
@@ -60,14 +60,10 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
                 // TOODO: Adjusted only for field 10 x 10. For other sizes must be corrected.
                 const x: number = (i % fieldSize) > 0 ? (i % fieldSize) - 2 : 9;
                 const y: number = Math.floor((i - 2) / fieldSize) - 1;
-                const cellStatus = {
-                    isNotAllowed: this.props.mode === BattleFieldMode.DEPLOYMENT ? !this.props.coordinates[x][y].isAvailable : false,
-                    isOccupied: this.props.mode === BattleFieldMode.DEPLOYMENT ? this.props.coordinates[x][y].isOccupied : false,
-                };
 
                 cells.push(<CellComponent
                     key={i}
-                    status={cellStatus}
+                    status={this.detecCellStatus(this.props.mode, this.props.coordinates[x][y])}
                     clickHandler={handler}
                     x={x}
                     y={y}
@@ -76,5 +72,27 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
         }
 
         return cells;
+    }
+
+    private detecCellStatus(mode: BattleFieldMode, cellData: ICoordinate): CellStatus {
+        if (this.props.mode === BattleFieldMode.UNDER_FIRE
+            && cellData.isFired
+            && cellData.isOccupied) {
+            return CellStatus.IS_HIT;
+        } else if (this.props.mode === BattleFieldMode.UNDER_FIRE
+            && cellData.isFired) {
+            return CellStatus.IS_FIRED;
+        } else if (this.props.mode === BattleFieldMode.DEPLOYMENT
+            && !cellData.isAvailable) {
+            return CellStatus.IS_NOT_ALLOWED;
+        } else if (this.props.mode === BattleFieldMode.DEPLOYMENT
+            && cellData.isOccupied) {
+            return CellStatus.IS_OCCUPIED;
+        } else if (this.props.mode === BattleFieldMode.READY_TO_FIGHT
+            || this.props.mode === BattleFieldMode.MIST_OF_WAR) {
+            return CellStatus.IS_INACTIVE;
+        } else {
+            return CellStatus.IS_CLEAR;
+        }
     }
 }

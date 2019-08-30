@@ -1,0 +1,20 @@
+.clickable {
+    cursor: pointer;
+}
+
+.occupied, .hit {
+    background-color: #83b983;
+}
+
+.unavailable {
+    background-color: #ecdcdc;
+}
+
+.inactive {
+    background-color: #c4c4c4;
+}
+
+.hit, .fired {
+    line-height: 30px;
+    text-align: center;
+}

@@ -6,22 +6,27 @@ export interface IAppAction extends Action<number> {
 }
 
 export enum AppActionType {
-    CLICK_TO_OCCUPY_CELL = 1,
-    CLICK_TO_FIRE_CELL,
-    CLICK_TO_SET_BATTLEFIELD_READY,
+    OCCUPY_CELL = 1,
+    FIRE_CELL,
+    SET_BATTLEFIELD_READY,
+    SET_OPPONENT_FIELD_UNDER_FIRE,
 }
 
 const app = {
-    clickToFireCell: (x: number, y: number, deskContext: IDeskContext) => ({
-        type: AppActionType.CLICK_TO_FIRE_CELL,
+    fireCell: (x: number, y: number, deskContext: IDeskContext) => ({
+        type: AppActionType.FIRE_CELL,
         value: {x, y, player: deskContext.player},
     }),
-    clickToOccupyCell: (x: number, y: number, deskContext: IDeskContext) => ({
-        type: AppActionType.CLICK_TO_OCCUPY_CELL,
+    occupyCell: (x: number, y: number, deskContext: IDeskContext) => ({
+        type: AppActionType.OCCUPY_CELL,
         value: {x, y, player: deskContext.player},
     }),
-    clickToSetBattlefieldReady: (deskContext: IDeskContext) => ({
-        type: AppActionType.CLICK_TO_SET_BATTLEFIELD_READY,
+    setBattlefieldReady: (deskContext: IDeskContext) => ({
+        type: AppActionType.SET_BATTLEFIELD_READY,
+        value: {...deskContext},
+    }),
+    setOpponentFieldUnderFire: (deskContext: IDeskContext) => ({
+        type: AppActionType.SET_OPPONENT_FIELD_UNDER_FIRE,
         value: {...deskContext},
     }),
 };

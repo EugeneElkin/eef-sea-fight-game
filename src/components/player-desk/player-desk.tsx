@@ -22,6 +22,7 @@ interface IPlayerDesktopHandlers {
     clickToOccupyCell: (x: number, y: number) => void;
     clickToFireCell: (x: number, y: number) => void;
     clickToSetFieldReady: () => void;
+    clickToSetOpponentFieldUnderFire: () => void;
 }
 
 interface IPlayerDesktopHandlersWrapper {
@@ -39,6 +40,8 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
         return (
             <div className="player-desk-container">
                 <div>{this.props.player.name}</div>
+                <br />
+                <div>MODE: {BattleFieldMode[this.props.player.desk.state]}</div>
                 <br />
                 <BattleFieldComponent
                     clickToOccupyCell={this.props.handlers.clickToOccupyCell}
@@ -62,6 +65,7 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
                 }
                 {this.props.player.desk.state !== BattleFieldMode.DEPLOYMENT &&
                     <ButtonComponent
+                        onClickHandler={this.props.handlers.clickToSetOpponentFieldUnderFire}
                         isDisabled={this.props.player.desk.state !== BattleFieldMode.MIST_OF_WAR}
                     >Make a turn</ButtonComponent>
                 }
@@ -87,13 +91,16 @@ const mapComponentEventsToReduxDispatches: (dispatch: Dispatch<Action<number>>, 
         return {
             handlers: {
                 clickToFireCell: (x, y) => {
-                    // do nothing for a while
+                    dispatch(Actions.app.fireCell(x, y, ownProps));
                 },
                 clickToOccupyCell: (x, y) => {
-                    dispatch(Actions.app.clickToOccupyCell(x, y, ownProps));
+                    dispatch(Actions.app.occupyCell(x, y, ownProps));
                 },
                 clickToSetFieldReady: () => {
-                    dispatch(Actions.app.clickToSetBattlefieldReady(ownProps));
+                    dispatch(Actions.app.setBattlefieldReady(ownProps));
+                },
+                clickToSetOpponentFieldUnderFire: () => {
+                    dispatch(Actions.app.setOpponentFieldUnderFire(ownProps));
                 },
             },
         };

@@ -2,39 +2,50 @@ import "./cell.css";
 
 import React = require("react");
 
-interface ICellState {
-    isOccupied: boolean;
-    isNotAllowed: boolean;
+export enum CellStatus {
+    IS_CLEAR,
+    IS_FIRED,
+    IS_OCCUPIED,
+    IS_NOT_ALLOWED,
+    IS_INACTIVE,
+    IS_HIT,
 }
 
 interface ICellComponentProps {
     clickHandler?: (x: number, y: number) => void;
-    status: ICellState;
+    status: CellStatus;
     x: number;
     y: number;
 }
 
 export class CellComponent extends React.Component<ICellComponentProps>  {
     public render() {
-        const cellClasses: string[] = ["clickable"];
+        let content: string | undefined;
+        let cellClasses: string[] = ["clickable"];
 
-        if (this.props.status.isOccupied) {
-            cellClasses.push("is-occupied");
-        }
-
-        if (this.props.status.isNotAllowed) {
-            cellClasses.push("is-not-available");
+        if (this.props.status === CellStatus.IS_OCCUPIED) {
+            cellClasses.push("occupied");
+        } else if (this.props.status === CellStatus.IS_NOT_ALLOWED) {
+            cellClasses.push("unavailable");
+        } else if (this.props.status === CellStatus.IS_INACTIVE) {
+            cellClasses = ["inactive"];
+        } else if (this.props.status === CellStatus.IS_FIRED) {
+            cellClasses = ["fired"];
+            content = "X";
+        } else if (this.props.status === CellStatus.IS_HIT) {
+            cellClasses = ["hit"];
+            content = "X";
         }
 
         if (this.props.clickHandler) {
             const handler: (x: number, y: number) => void = this.props.clickHandler;
             return (
-                <div className={cellClasses.join(" ")} onClick={() => handler(this.props.x, this.props.y)}></div>
+                <div className={cellClasses.join(" ")} onClick={() => handler(this.props.x, this.props.y)}>{content}</div>
             );
         }
 
         return (
-            <div className={cellClasses.join(" ")}></div>
+            <div className={cellClasses.join(" ")}>{content}</div>
         );
     }
 }
