@@ -13,7 +13,8 @@ export class FleetStateComponent extends React.Component<IFleetStateComponentPro
         let numOfCruisers: number = 0;
         let numOfDestroyers: number = 0;
         let numOfTorpedoBoats: number = 0;
-        for (const ship of this.props.fleet) {
+        const activeFleet: IShip[] = this.props.fleet.filter(x => !x.isDrown)
+        for (const ship of activeFleet) {
             if (ship.coordinates.length === 1) {
                 numOfTorpedoBoats++;
             }

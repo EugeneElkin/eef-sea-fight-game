@@ -15,11 +15,11 @@ export enum AppActionType {
 const app = {
     fireCell: (x: number, y: number, deskContext: IDeskContext) => ({
         type: AppActionType.FIRE_CELL,
-        value: {x, y, player: deskContext.player},
+        value: {x, y, ...deskContext},
     }),
     occupyCell: (x: number, y: number, deskContext: IDeskContext) => ({
         type: AppActionType.OCCUPY_CELL,
-        value: {x, y, player: deskContext.player},
+        value: {x, y, ...deskContext},
     }),
     setBattlefieldReady: (deskContext: IDeskContext) => ({
         type: AppActionType.SET_BATTLEFIELD_READY,

@@ -20,7 +20,7 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
         super(props);
 
         this.state = {
-            isDisabled: this.props.isDisabled ? this.props.isDisabled : false,
+            isDisabled: !(this.props.isDisabled === undefined) ? this.props.isDisabled : false,
         };
     }
 
@@ -30,6 +30,18 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
                 this.setState({ isDisabled: !isEnabled });
             });
         }
+    }
+
+    static getDerivedStateFromProps(props: IButtonComponentProps, state: IButtonComponentState): IButtonComponentState | null {
+        console.log("Get derived state from props")
+
+        if (!props.enableNotification) {
+            return {
+                isDisabled: !(props.isDisabled === undefined) ? props.isDisabled : false,
+            };
+        }
+
+        return null;
     }
 
     public componentWillUnmount() {

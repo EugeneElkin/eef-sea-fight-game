@@ -1,11 +1,11 @@
 import React = require("react");
-import { ICoordinate } from "../../classes/coordinate";
+import { ICellCoordinate } from "../../classes/cell-coordinate";
 import { BattleFieldMode } from "../../enums/battle-field-mode";
 import { CellComponent, CellStatus } from "../cell/cell";
 import "./battle-field.css";
 
 interface IBattleFieldComponentProps {
-    coordinates: ICoordinate[][];
+    coordinates: ICellCoordinate[][];
     mode: BattleFieldMode;
     size: number;
     clickToOccupyCell: (x: number, y: number) => void;
@@ -74,18 +74,24 @@ export class BattleFieldComponent extends React.Component<IBattleFieldComponentP
         return cells;
     }
 
-    private detecCellStatus(mode: BattleFieldMode, cellData: ICoordinate): CellStatus {
-        if (this.props.mode === BattleFieldMode.UNDER_FIRE
+    private detecCellStatus(mode: BattleFieldMode, cellData: ICellCoordinate): CellStatus {
+        const showAll: boolean = this.props.mode === BattleFieldMode.MONITORING
+        || this.props.mode === BattleFieldMode.WON
+        || this.props.mode === BattleFieldMode.LOST;
+        if ((showAll || this.props.mode === BattleFieldMode.UNDER_FIRE)
+            && cellData.isBurried) {
+            return CellStatus.IS_BURRIED;
+        } else if ((showAll || this.props.mode === BattleFieldMode.UNDER_FIRE)
             && cellData.isFired
             && cellData.isOccupied) {
             return CellStatus.IS_HIT;
-        } else if (this.props.mode === BattleFieldMode.UNDER_FIRE
+        } else if ((showAll || this.props.mode === BattleFieldMode.UNDER_FIRE)
             && cellData.isFired) {
             return CellStatus.IS_FIRED;
         } else if (this.props.mode === BattleFieldMode.DEPLOYMENT
             && !cellData.isAvailable) {
             return CellStatus.IS_NOT_ALLOWED;
-        } else if (this.props.mode === BattleFieldMode.DEPLOYMENT
+        } else if ((showAll || this.props.mode === BattleFieldMode.DEPLOYMENT)
             && cellData.isOccupied) {
             return CellStatus.IS_OCCUPIED;
         } else if (this.props.mode === BattleFieldMode.READY_TO_FIGHT

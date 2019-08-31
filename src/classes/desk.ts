@@ -1,8 +1,8 @@
 import { BattleFieldMode } from "../enums/battle-field-mode";
-import { ICoordinate } from "./coordinate";
+import { ICellCoordinate } from "./cell-coordinate";
 
 export interface IDesk {
-    coordinates: ICoordinate[][];
+    coordinates: ICellCoordinate[][];
     owner: string;
     state: BattleFieldMode;
 }

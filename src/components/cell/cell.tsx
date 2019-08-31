@@ -9,6 +9,7 @@ export enum CellStatus {
     IS_NOT_ALLOWED,
     IS_INACTIVE,
     IS_HIT,
+    IS_BURRIED,
 }
 
 interface ICellComponentProps {
@@ -34,6 +35,9 @@ export class CellComponent extends React.Component<ICellComponentProps>  {
             content = "X";
         } else if (this.props.status === CellStatus.IS_HIT) {
             cellClasses = ["hit"];
+            content = "X";
+        } else if (this.props.status === CellStatus.IS_BURRIED) {
+            cellClasses = ["burried"];
             content = "X";
         }
 

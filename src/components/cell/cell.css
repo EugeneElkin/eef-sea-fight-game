@@ -14,7 +14,11 @@
     background-color: #c4c4c4;
 }
 
-.hit, .fired {
+.hit, .fired, .burried {
     line-height: 30px;
     text-align: center;
+}
+
+.burried {
+    background-color: #b83939;
 }

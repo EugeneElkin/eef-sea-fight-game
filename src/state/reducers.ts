@@ -41,7 +41,8 @@ const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerSta
     const reducers = {
         [AppActionType.FIRE_CELL]: (state: IAppReduxState) => {
             const player: IPlayer = state[action.value.player];
-            player.desk.coordinates[action.value.x][action.value.y].isFired = true;
+            const enemy: IPlayer = state[action.value.enemy];
+            DataWorkShopService.fireCell(action.value.x, action.value.y, player, enemy, state.fieldSize);
             return state;
         },
         [AppActionType.OCCUPY_CELL]: (state: IAppReduxState) => {
@@ -60,7 +61,9 @@ const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerSta
             return state;
         },
         [AppActionType.SET_OPPONENT_FIELD_UNDER_FIRE]: (state: IAppReduxState) => {
+            const player: IPlayer = state[action.value.player];
             const enemy: IPlayer = state[action.value.enemy];
+            player.desk.state = BattleFieldMode.MONITORING;
             enemy.desk.state = BattleFieldMode.UNDER_FIRE;
             return state;
         }

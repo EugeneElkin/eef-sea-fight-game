@@ -63,7 +63,9 @@ class PlayerDeskComponent extends React.Component<IPlayerDeskComponentDescriptor
                         isDisabled={true}
                     >I am ready to fight!</ButtonComponent>
                 }
-                {this.props.player.desk.state !== BattleFieldMode.DEPLOYMENT &&
+                {this.props.player.desk.state !== BattleFieldMode.DEPLOYMENT
+                && this.props.player.desk.state !== BattleFieldMode.WON
+                && this.props.player.desk.state !== BattleFieldMode.LOST &&
                     <ButtonComponent
                         onClickHandler={this.props.handlers.clickToSetOpponentFieldUnderFire}
                         isDisabled={this.props.player.desk.state !== BattleFieldMode.MIST_OF_WAR}
