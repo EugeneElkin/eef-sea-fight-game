@@ -13,6 +13,15 @@ interface IButtonComponentState {
 }
 
 export class ButtonComponent extends React.Component<IButtonComponentProps, IButtonComponentState> {
+    private static getDerivedStateFromProps(props: IButtonComponentProps, state: IButtonComponentState): IButtonComponentState | null {
+        if (!props.enableNotification) {
+            return {
+                isDisabled: !(props.isDisabled === undefined) ? props.isDisabled : false,
+            };
+        }
+
+        return null;
+    }
 
     private subscription?: Subscription;
 
@@ -30,18 +39,6 @@ export class ButtonComponent extends React.Component<IButtonComponentProps, IBut
                 this.setState({ isDisabled: !isEnabled });
             });
         }
-    }
-
-    static getDerivedStateFromProps(props: IButtonComponentProps, state: IButtonComponentState): IButtonComponentState | null {
-        console.log("Get derived state from props")
-
-        if (!props.enableNotification) {
-            return {
-                isDisabled: !(props.isDisabled === undefined) ? props.isDisabled : false,
-            };
-        }
-
-        return null;
     }
 
     public componentWillUnmount() {

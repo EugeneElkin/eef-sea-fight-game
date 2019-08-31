@@ -66,7 +66,7 @@ const appReducer: Reducer = (currentState: IAppReduxState = initialAppReducerSta
             player.desk.state = BattleFieldMode.MONITORING;
             enemy.desk.state = BattleFieldMode.UNDER_FIRE;
             return state;
-        }
+        },
     };
 
     const clonnedState: IAppReduxState = JSON.parse(JSON.stringify(currentState));

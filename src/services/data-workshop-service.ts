@@ -1,7 +1,6 @@
 import { ICellCoordinate } from "../classes/cell-coordinate";
 import { IPlayer } from "../classes/player";
 import { IShip } from "../classes/ship";
-import { ENGINE_METHOD_RAND } from "constants";
 import { BattleFieldMode } from "../enums/battle-field-mode";
 
 enum AttachmentToShipResult {
@@ -19,9 +18,9 @@ export class DataWorkShopService {
             for (let y = 0; y < fieldSize; y++) {
                 coordinates[x][y] = {
                     isAvailable: true,
+                    isBurried: false,
                     isFired: false,
                     isOccupied: false,
-                    isBurried: false,
                     x,
                     y,
                 };
@@ -36,24 +35,24 @@ export class DataWorkShopService {
             return;
         }
         player.desk.coordinates[x][y].isFired = true;
-        const targetShip: IShip | undefined = player.fleet.find(sh => sh.coordinates.find(cord => cord.x === x && cord.y === y));
+        const targetShip: IShip | undefined = player.fleet.find((sh) => sh.coordinates.find((cord) => cord.x === x && cord.y === y));
         if (targetShip && targetShip.coordinates) {
             const hits: boolean[] = [];
-            for (let cord of targetShip.coordinates) {
+            for (const cord of targetShip.coordinates) {
                 if (player.desk.coordinates[cord.x][cord.y].isFired) {
                     hits.push(true);
                 }
             }
 
             if (hits.length === targetShip.coordinates.length) {
-                for (let cord of targetShip.coordinates) {
+                for (const cord of targetShip.coordinates) {
                     player.desk.coordinates[cord.x][cord.y].isBurried = true;
                 }
                 targetShip.isDrown = true;
-                this.markNearestShipCellsAsFired(targetShip, player.desk.coordinates, fieldSize)
+                this.markNearestShipCellsAsFired(targetShip, player.desk.coordinates, fieldSize);
             }
 
-            if (!player.fleet.find(sh => !sh.isDrown)) {
+            if (!player.fleet.find((sh) => !sh.isDrown)) {
                 player.desk.state = BattleFieldMode.LOST;
                 enemy.desk.state = BattleFieldMode.WON;
             }
